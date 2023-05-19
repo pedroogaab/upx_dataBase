@@ -62,7 +62,15 @@ for i in data["documents"]:
         last_pill = data[0]
         last_pill = last_pill["fields"]["log"]["mapValue"]["fields"]
 
-        if logs == True:
-            print("verdadeiro", logs)
-            
-        else: print("falso", logs)
+        if logs == False:
+            msg.attach(
+                MIMEText(f"Olá {name}, você precisa tomar o seu {remedio}", "plain")
+            )
+            with smtplib.SMTP(smtp_server, smtp_port) as server:
+                server.starttls()
+                server.login(email_origin, password)
+                server.send_message(msg)
+                print("E-mail enviado com sucesso!")
+
+        else:
+            ...
