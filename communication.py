@@ -21,7 +21,7 @@ for i in data["documents"]:
         last_pill = last_pill["fields"]["log"]["mapValue"]["fields"]
         print(last_pill)
 
-        # if logs == True:
-        #     print("verdadeiro", logs)
+        if logs == True:
+            print("verdadeiro", logs)
             
-        # else: print("falso", logs)
+        else: print("falso", logs)
