@@ -59,8 +59,8 @@ for i in data["documents"]:
 
         logs = data[0]["fields"]["Enable"]["booleanValue"]
 
-        last_pill = data[0]
-        last_pill = last_pill["fields"]["log"]["mapValue"]["fields"]
+        # last_pill = data[0]
+        # last_pill = last_pill["fields"]["log"]["mapValue"]["fields"]
 
         if logs == False:
             msg.attach(
