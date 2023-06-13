@@ -33,13 +33,14 @@ def send_email(email_origin, password, email_destiny, subject, message):
         server.starttls()
         server.login(email_origin, password)
         server.send_message(msg)
-        print("E-mail enviado com sucesso!")
+        print("\033[1;32;40mE-mail enviado com sucesso! \033[0;0m")
 
 
-email_origin = input("E-mail: ")
+email_origin = input("\nE-mail: ")
 smtp_server = get_email_provider(email_origin)
 smtp_port = 587
 password = getpass.getpass("Password: ", stream=None)
+
 
 link = "https://firestore.googleapis.com/v1/projects/smart-pill-void/databases/(default)/documents/User/"
 response = requests.get(link)
@@ -50,7 +51,6 @@ for i in data["documents"]:
     name = str(i["fields"]["Name"]["stringValue"])
     first_name = name.split(" ")[0]
     email_destiny = str(i["fields"]["Email"]["stringValue"])
-    
 
     medicamentos_data = get_medicamentos_data(user)
     precisa_tomar = []
@@ -59,25 +59,23 @@ for i in data["documents"]:
             remedio = med["name"]
             name_remedio = str(remedio).split("/")[-1]
 
-            logs = med['fields']["Enable"]["booleanValue"]
-            
+            try:
+                tomou = med["fields"]["log"]["arrayValue"]["values"][0]
+                tomou = tomou["mapValue"]["fields"]["tomou"]["booleanValue"]
 
-            if logs == False:
-                precisa_tomar.append(name_remedio)
-
+                if tomou is False:
+                    precisa_tomar.append(name_remedio)
+            except:
+                print(f"Erro ao acessar o remedio '{name_remedio}' do {name}")
 
         if len(precisa_tomar) > 1:
             subject = f"{first_name}, você precisa tomar seus remédios"
             message = f"Olá {name}, você precisa tomar os remédios: {', '.join(precisa_tomar)}"
             send_email(email_origin, password, email_destiny, subject, message)
-
         elif len(precisa_tomar) == 1:
             subject = f"{first_name}, você precisa tomar seu remédio"
             message = f"Olá {name}, você precisa tomar o remédio: {precisa_tomar[0]}"
-
             send_email(email_origin, password, email_destiny, subject, message)
-
-
     else:
-        print(f"Erro ao processar usuário: {user}")
+        print(f"Erro ao processar usuário: {name}")
         continue
