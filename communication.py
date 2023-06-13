@@ -50,35 +50,34 @@ for i in data["documents"]:
     name = str(i["fields"]["Name"]["stringValue"])
     first_name = name.split(" ")[0]
     email_destiny = str(i["fields"]["Email"]["stringValue"])
+    
 
-    try:
-        medicamentos_data = get_medicamentos_data(user)
-
-        precisa_tomar = []
+    medicamentos_data = get_medicamentos_data(user)
+    precisa_tomar = []
+    if medicamentos_data:
         for med in medicamentos_data["documents"]:
             remedio = med["name"]
             name_remedio = str(remedio).split("/")[-1]
 
-            logs = med["fields"]["Enable"]["booleanValue"]
-
-            last_pill = med["fields"]["log"]["arrayValue"]["values"][-1]["mapValue"][
-                "fields"
-            ]
-            logs = last_pill["tomou"]["booleanValue"]
-            last_pill = str(last_pill["day"]["timestampValue"])
+            logs = med['fields']["Enable"]["booleanValue"]
+            
 
             if logs == False:
                 precisa_tomar.append(name_remedio)
 
+
         if len(precisa_tomar) > 1:
             subject = f"{first_name}, você precisa tomar seus remédios"
             message = f"Olá {name}, você precisa tomar os remédios: {', '.join(precisa_tomar)}"
-        else:
+            send_email(email_origin, password, email_destiny, subject, message)
+
+        elif len(precisa_tomar) == 1:
             subject = f"{first_name}, você precisa tomar seu remédio"
             message = f"Olá {name}, você precisa tomar o remédio: {precisa_tomar[0]}"
 
-        send_email(email_origin, password, email_destiny, subject, message)
+            send_email(email_origin, password, email_destiny, subject, message)
 
-    except Exception as e:
-        print(f"Erro ao processar usuário: {user}. Erro: {str(e)}")
+
+    else:
+        print(f"Erro ao processar usuário: {user}")
         continue
