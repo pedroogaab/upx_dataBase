@@ -4,6 +4,9 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import getpass
 
+from utils.login import *
+
+
 
 def get_email_provider(email):
     smtp = str(email.split("@")[-1])
@@ -37,10 +40,16 @@ def send_email(email_origin, password, email_destiny, subject, message):
 
 
 
-email_origin = input("\nE-mail: ")
+login_instance = login()
+
+# email_origin = input("\nE-mail: ")
+email_origin = login_instance.user
+
+
 smtp_server = get_email_provider(email_origin)
 smtp_port = 587
-password = getpass.getpass("Password: ", stream=None)
+# password = getpass.getpass("Password: ", stream=None)
+password = login_instance.password
 
 
 link = "https://firestore.googleapis.com/v1/projects/smart-pill-void/databases/(default)/documents/User/"
